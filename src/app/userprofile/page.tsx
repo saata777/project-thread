@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+
 import { useEffect, useState } from "react";
 import { doc, getDoc, collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
@@ -21,11 +21,14 @@ interface Post {
 }
 
 const UserProfilePage = () => {
-  const searchParams = useSearchParams();
-  const userId = searchParams?.get("userId") ?? "null";
-
+  const [userId, setUserId] = useState<string | null>(null);
   const [userData, setUserData] = useState<UserData | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    setUserId(searchParams.get("userId"));
+  }, []);
 
   useEffect(() => {
     if (!userId) return;

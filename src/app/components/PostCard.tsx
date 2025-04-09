@@ -15,7 +15,6 @@ import {
   orderBy,
   onSnapshot,
   deleteDoc,
-  
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -29,6 +28,15 @@ interface Post {
   likes?: string[];
 }
 
+interface Comment {
+  id: string;
+  content: string;
+  userId: string;
+  userDisplayName: string;
+  userPhotoURL?: string;
+  createdAt?: { toDate: () => Date };
+}
+
 export default function PostCard({ post }: { post: Post }) {
   const { currentUser } = useAuth();
   const [isLiked, setIsLiked] = useState(
@@ -37,7 +45,7 @@ export default function PostCard({ post }: { post: Post }) {
   const [likeCount, setLikeCount] = useState<number>(post.likes?.length || 0);
   const [comment, setComment] = useState("");
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editedComment, setEditedComment] = useState("");
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -45,11 +53,10 @@ export default function PostCard({ post }: { post: Post }) {
   const [showPostMenu, setShowPostMenu] = useState(false);
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedPostContent, setEditedPostContent] = useState(post.content);
-  
+
   const menuRef = useRef<HTMLDivElement>(null);
   const postMenuRef = useRef<HTMLDivElement>(null);
 
-  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -107,7 +114,10 @@ export default function PostCard({ post }: { post: Post }) {
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setComments(
-        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() as { [key: string]: any } }))
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...(doc.data() as Omit<Comment, "id">),
+        }))
       );
     });
     return unsubscribe;
@@ -147,16 +157,13 @@ export default function PostCard({ post }: { post: Post }) {
     if (!comment.trim() || !currentUser) return;
 
     try {
-      await addDoc(
-        collection(db, "posts", post.id, "comments"),
-        {
-          content: comment,
-          userId: currentUser.uid,
-          userDisplayName: currentUser.displayName,
-          userPhotoURL: currentUser.photoURL,
-          createdAt: serverTimestamp(),
-        }
-      );
+      await addDoc(collection(db, "posts", post.id, "comments"), {
+        content: comment,
+        userId: currentUser.uid,
+        userDisplayName: currentUser.displayName,
+        userPhotoURL: currentUser.photoURL,
+        createdAt: serverTimestamp(),
+      });
       await addDoc(collection(db, "activities"), {
         type: "comment",
         userId: post.userId,

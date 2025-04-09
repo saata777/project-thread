@@ -33,7 +33,7 @@ export default function ProfilePage() {
     userId: string;
     userDisplayName: string;
     content: string;
-    [key: string]: any;
+    [key: string]: string | number | boolean | undefined;
   }
 
   const [posts, setPosts] = useState<Post[]>([]);
