@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
-import { UserCredential } from "firebase/auth";
 import Link from "next/link";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
+import { getAuth, UserCredential } from "firebase/auth";
+
 
 interface AuthContextType {
   user: {
@@ -20,6 +21,7 @@ interface AuthContextType {
     password: string,
     displayName: string
   ) => Promise<UserCredential>;
+ 
 }
 
 interface FormData {
@@ -29,12 +31,9 @@ interface FormData {
   confirmPassword: string;
 }
 
-interface RegisterData {
-  email: string;
-  password: string;
-}
+const auth = getAuth();
 
-const RegisterPage = () => {
+export default function RegisterPage() {
   const { register } = useAuth() as unknown as AuthContextType;
   const router = useRouter();
   const [error, setError] = useState("");
@@ -54,10 +53,6 @@ const RegisterPage = () => {
     });
   };
 
-  const handleRegister = (data: RegisterData) => {
-    console.log(data);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -75,6 +70,7 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
+      
       console.log("Registering user with email:", formData.email);
       const userCredential = await register(
         formData.email,
@@ -84,6 +80,7 @@ const RegisterPage = () => {
 
       console.log("User registered successfully", userCredential);
 
+   
       const userDocRef = doc(db, "users", userCredential.user.uid);
       await setDoc(userDocRef, {
         displayName: formData.displayName,
@@ -91,24 +88,23 @@ const RegisterPage = () => {
         createdAt: serverTimestamp(),
       });
 
+     
       router.push("/home");
-    } catch (error: unknown) {
+    } catch (error: any) {
       console.error("Registration error:", error);
 
-      if (error instanceof Error) {
-        switch ((error as any).code) {
-          case "auth/email-already-in-use":
-            setError("email-already-in-use");
-            break;
-          case "auth/invalid-email":
-            setError("invalid-email");
-            break;
-          case "auth/weak-password":
-            setError("weak-password");
-            break;
-          default:
-            setError("registration error: " + error.message);
-        }
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          setError("email-already-in-use");
+          break;
+        case "auth/invalid-email":
+          setError("invalid-email");
+          break;
+        case "auth/weak-password":
+          setError("weak-password");
+          break;
+        default:
+          setError("registration error: " + error.message);
       }
     } finally {
       setLoading(false);
@@ -283,6 +279,4 @@ const RegisterPage = () => {
       </div>
     </div>
   );
-};
-
-export default RegisterPage;
+}

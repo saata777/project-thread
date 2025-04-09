@@ -16,24 +16,8 @@ import {
 import { db } from "../firebase";
 import PostCard from "../components/PostCard";
 import { CreatePost } from "../components/CreatePost";
-import Image from "next/image";
 
-interface Post {
-  id: string;
-  userId: string;
-  userDisplayName: string;
-  userPhotoURL: string;
-  content: string;
-  [key: string]: any;
-}
-
-// შეცვალეთ `any` კონკრეტული ტიპებით:
-interface Profile {
-  id: string;
-  name: string;
-}
-
-const ProfilePage = () => {
+export default function ProfilePage() {
   const { currentUser, updateUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -44,13 +28,8 @@ const ProfilePage = () => {
   });
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
-
-  const profile: Profile = { id: "1", name: "John Doe" };
-
-  // შეცვალეთ `let` `const`-ით:
-  const photoURL = "/path/to/photo";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -93,19 +72,19 @@ const ProfilePage = () => {
   }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser) {
-      const q = query(
-        collection(db, "posts"),
-        where("userId", "==", currentUser.uid),
-        orderBy("createdAt", "desc")
-      );
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        setPosts(
-          snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Post))
-        );
-      });
-      return unsubscribe;
-    }
+    if (!currentUser) return; // თუ currentUser არ არის, ფუნქცია შეწყდეს
+
+    const q = query(
+      collection(db, "posts"),
+      where("userId", "==", currentUser.uid),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+
+    return () => unsubscribe(); // გაწმენდის ფუნქცია
   }, [currentUser]);
 
   const handleChange = (
@@ -139,23 +118,20 @@ const ProfilePage = () => {
 
     setLoading(true);
     try {
-      let photoURL = formData.photoURL;
-
       if (file) {
-        // Handle file upload logic here
       }
 
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
         displayName: formData.displayName,
         bio: formData.bio,
-        photoURL,
+        photoURL: formData.photoURL,
         link: formData.link,
       });
 
       await updateUserProfile({
         displayName: formData.displayName,
-        photoURL,
+        photoURL: formData.photoURL,
         bio: formData.bio,
       });
 
@@ -177,12 +153,10 @@ const ProfilePage = () => {
         <div className="flex flex-row-reverse items-start space-x-6">
           <div className="flex flex-col items-center">
             <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
-              <Image
+              <img
                 src={formData.photoURL || "/default-profile.png"}
                 alt="Profile"
                 className="w-full h-full bg-white object-cover"
-                width={80}
-                height={80}
               />
             </div>
             <div className="flex gap-4 flex-row mt-5 ml-7 ">
@@ -263,12 +237,10 @@ const ProfilePage = () => {
             <form onSubmit={handleSubmit}>
               <div className="flex flex-row-reverse items-center ">
                 <label className="relative  w-12 cursor-pointer h-12 rounded-full mb-[35px]  overflow-hidden border-2 border-gray-200 ">
-                  <Image
+                  <img
                     src={formData.photoURL || ""}
                     alt="Profile"
                     className="object-cover w-full  h-full"
-                    width={48}
-                    height={48}
                   />
 
                   <input
@@ -331,10 +303,10 @@ const ProfilePage = () => {
                   <span className=" text-sm text-[20px] font-medium  text-white">
                     Private profile
                   </span>
-                  <span className="text-[12px] h-[45px] text-[#636363] mt-3">
-                    f you switch to private, you won't be able to reply to
+                  <p className="text-[12px] h-[45px] text-[#636363] mt-3">
+                    If you switch to private, you won&apos;t be able to reply to
                     others unless they follow you.
-                  </span>
+                  </p>
                 </div>
                 <label className=" cursor-pointer">
                   <input type="checkbox" value="" className="sr-only peer" />
@@ -366,6 +338,4 @@ const ProfilePage = () => {
       </div>
     </div>
   );
-};
-
-export default ProfilePage;
+}

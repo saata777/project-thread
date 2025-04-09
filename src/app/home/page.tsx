@@ -8,32 +8,15 @@ import { db } from "../firebase";
 import PostCard from "../components/PostCard";
 import { CreatePost } from "../components/CreatePost";
 
-interface Post {
-  id: string;
-  createdAt: Date;
-  userId: string;
-  userDisplayName: string;
-  userPhotoURL: string;
-  content: string;
-  [key: string]: any;
-}
-
-interface HomeData {
-  id: string;
-  title: string;
-}
-
 const HomePage = () => {
   const { currentUser } = useAuth();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
     const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setPosts(
-        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Post))
-      );
+      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return unsubscribe;
   }, []);
@@ -46,22 +29,19 @@ const HomePage = () => {
     router.push("/register");
   };
 
-  const data: HomeData[] = [];
-
   return (
     <div className="max-w-2xl rounded-t-[30px] border-[#272727] border-b-0 border-[2px] bg-[#1a1a1a] text-black mx-auto">
       <h1 className="absolute top-4 left-[650px] text-white ">Home</h1>
       {!currentUser && (
-        <div className="inset-0 fixed ml-[1000px] mb-[300px] flex items-center justify-center  ">
-          <div className="bg-[#151515]  p-6 rounded-xl shadow-xl border ">
+        <div className="inset-0 fixed ml-[1000px] mb-[300px] flex items-center justify-center">
+          <div className="bg-[#151515] p-6 rounded-xl shadow-xl border">
             <h2 className="text-[38px] font-bold text-white mb-4 text-center">
               Say more with Threads
             </h2>
             <p className="text-gray-300 mb-6 text-center">
-              Join Threads to share thoughts, find out what&apos;s <br /> going
-              on, follow your people and more.
+              Join Threads to share thoughts, find out what's <br /> going on,
+              follow your people and more.
             </p>
-
             <div className="flex flex-col space-y-3">
               <button
                 onClick={onLogin}
@@ -80,14 +60,13 @@ const HomePage = () => {
         </div>
       )}
       {currentUser && <CreatePost />}
-
       <div className="">
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>
-
-      <div>{data.map((item) => item.title)}</div>
     </div>
   );
 };
+
+export default HomePage;

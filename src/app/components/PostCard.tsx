@@ -15,38 +15,19 @@ import {
   orderBy,
   onSnapshot,
   deleteDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
-import Image from "next/image";
 
-interface Post {
-  id: string;
-  userId: string;
-  userDisplayName: string;
-  userPhotoURL: string;
-  content: string;
-  imageUrl?: string;
-  likes?: string[];
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  userId: string;
-  userDisplayName: string;
-  userPhotoURL: string;
-  createdAt: any;
-}
-
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({ post }: { post: any }) {
   const { currentUser } = useAuth();
   const [isLiked, setIsLiked] = useState(
-    post.likes?.includes(currentUser?.uid ?? "") || false
+    post.likes?.includes(currentUser?.uid) || false
   );
   const [likeCount, setLikeCount] = useState<number>(post.likes?.length || 0);
   const [comment, setComment] = useState("");
   const [showComments, setShowComments] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<any[]>([]);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editedComment, setEditedComment] = useState("");
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -54,19 +35,17 @@ export default function PostCard({ post }: { post: Post }) {
   const [showPostMenu, setShowPostMenu] = useState(false);
   const [isEditingPost, setIsEditingPost] = useState(false);
   const [editedPostContent, setEditedPostContent] = useState(post.content);
-
+  
   const menuRef = useRef<HTMLDivElement>(null);
   const postMenuRef = useRef<HTMLDivElement>(null);
 
+  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowMenu(false);
       }
-      if (
-        postMenuRef.current &&
-        !postMenuRef.current.contains(event.target as Node)
-      ) {
+      if (postMenuRef.current && !postMenuRef.current.contains(event.target as Node)) {
         setShowPostMenu(false);
       }
     };
@@ -158,13 +137,16 @@ export default function PostCard({ post }: { post: Post }) {
     if (!comment.trim() || !currentUser) return;
 
     try {
-      await addDoc(collection(db, "posts", post.id, "comments"), {
-        content: comment,
-        userId: currentUser.uid,
-        userDisplayName: currentUser.displayName,
-        userPhotoURL: currentUser.photoURL,
-        createdAt: serverTimestamp(),
-      });
+      await addDoc(
+        collection(db, "posts", post.id, "comments"),
+        {
+          content: comment,
+          userId: currentUser.uid,
+          userDisplayName: currentUser.displayName,
+          userPhotoURL: currentUser.photoURL,
+          createdAt: serverTimestamp(),
+        }
+      );
       await addDoc(collection(db, "activities"), {
         type: "comment",
         userId: post.userId,
@@ -239,13 +221,11 @@ export default function PostCard({ post }: { post: Post }) {
       <div className="flex items-start mb-3">
         <div className="w-10 h-10 bg-gray-300 rounded-full overflow-hidden mr-3">
           {post.userPhotoURL && (
-            <Image
+            <img
               src={post.userPhotoURL}
               alt={post.userDisplayName}
               onClick={() => navigateToUserProfile(post.userId)}
               className="w-full h-full object-cover cursor-pointer"
-              width={40}
-              height={40}
             />
           )}
         </div>
@@ -258,7 +238,7 @@ export default function PostCard({ post }: { post: Post }) {
               {post.userDisplayName}
             </a>
           </div>
-
+          
           {currentUser && currentUser.uid === post.userId && (
             <div className="relative" ref={postMenuRef}>
               <button
@@ -285,7 +265,7 @@ export default function PostCard({ post }: { post: Post }) {
               )}
             </div>
           )}
-
+          
           {isEditingPost ? (
             <div className="mt-3">
               <textarea
@@ -312,12 +292,10 @@ export default function PostCard({ post }: { post: Post }) {
           ) : (
             <>
               {post.imageUrl && (
-                <Image
+                <img
                   src={post.imageUrl}
                   alt="Post image"
                   className="mt-3 rounded-lg max-w-full h-[500px] object-cover"
-                  width={500}
-                  height={500}
                 />
               )}
               <p className="mb-4">{post.content}</p>
@@ -372,12 +350,10 @@ export default function PostCard({ post }: { post: Post }) {
                 <div key={comment.id} className="flex items-start">
                   <div className="w-8 h-8 bg-gray-300 rounded-full mr-2 overflow-hidden">
                     {comment.userPhotoURL && (
-                      <Image
+                      <img
                         src={comment.userPhotoURL}
                         alt={comment.userDisplayName}
                         className="w-full h-full object-cover"
-                        width={32}
-                        height={32}
                       />
                     )}
                   </div>

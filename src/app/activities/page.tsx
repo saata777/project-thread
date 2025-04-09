@@ -1,3 +1,4 @@
+// app/activities/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,24 +9,13 @@ import {
   where,
   orderBy,
   onSnapshot,
-  DocumentData,
 } from "firebase/firestore";
 import { db } from ".././firebase";
 import Link from "next/link";
 
-interface Activity {
-  id: string;
-  type: string;
-  byUser?: string;
-  content?: string;
-  createdAt?: {
-    toDate: () => Date;
-  };
-}
-
 export default function ActivitiesPage() {
   const { currentUser } = useAuth();
-  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -38,7 +28,7 @@ export default function ActivitiesPage() {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setActivities(
-        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Activity))
+        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
       );
     });
 
@@ -85,8 +75,8 @@ export default function ActivitiesPage() {
                 )}
                 {activity.type === "comment" && (
                   <span>
-                    {activity.byUser} commented on your post: &quot;
-                    {activity.content}&quot;
+                    {activity.byUser} commented on your post: "
+                    {activity.content}"
                   </span>
                 )}
                 {activity.type === "follow" && (
