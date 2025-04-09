@@ -28,7 +28,15 @@ export default function ProfilePage() {
   });
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  interface Post {
+    id: string;
+    userId: string;
+    userDisplayName: string;
+    content: string;
+    [key: string]: any;
+  }
+
+  const [posts, setPosts] = useState<Post[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -81,7 +89,18 @@ export default function ProfilePage() {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      setPosts(
+        snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            userId: data.userId || "",
+            userDisplayName: data.userDisplayName || "",
+            content: data.content || "",
+            ...data,
+          } as Post;
+        })
+      );
     });
 
     return () => unsubscribe(); // გაწმენდის ფუნქცია

@@ -27,7 +27,7 @@ export const CreatePost = () => {
         className="w-[75%] cursor-pointer text-gray-300" 
         onClick={() => setIsModalOpen(true)}
       >
-        What's new?
+        What&apos;s new?
       </h1>
       <button
         onClick={handleClick}

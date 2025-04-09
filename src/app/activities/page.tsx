@@ -92,7 +92,7 @@ export default function ActivitiesPage() {
                 {activity.type === "comment" && (
                   <span>
                     {activity.byUser} commented on your post: 
-                    {activity.content}"
+                    {activity.content}
                   </span>
                 )}
                 {activity.type === "follow" && (

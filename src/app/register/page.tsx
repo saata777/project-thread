@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import { getAuth, UserCredential } from "firebase/auth";
+import {UserCredential } from "firebase/auth";
 
 
 interface AuthContextType {
@@ -90,21 +90,25 @@ export default function RegisterPage() {
 
      
       router.push("/home");
-    } catch (error: string | any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
 
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          setError("email-already-in-use");
-          break;
-        case "auth/invalid-email":
-          setError("invalid-email");
-          break;
-        case "auth/weak-password":
-          setError("weak-password");
-          break;
-        default:
-          setError("registration error: " + error.message);
+      if (typeof error === "object" && error !== null && "code" in error) {
+        switch ((error as { code: string }).code) {
+          case "auth/email-already-in-use":
+            setError("email-already-in-use");
+            break;
+          case "auth/invalid-email":
+            setError("invalid-email");
+            break;
+          case "auth/weak-password":
+            setError("weak-password");
+            break;
+          default:
+            setError("registration error: " + ((error as unknown) as Error).message);
+        }
+      } else {
+        setError("An unknown error occurred");
       }
     } finally {
       setLoading(false);

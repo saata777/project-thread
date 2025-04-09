@@ -15,14 +15,24 @@ import {
   orderBy,
   onSnapshot,
   deleteDoc,
-  getDoc,
+  
 } from "firebase/firestore";
 import { db } from "../firebase";
 
-export default function PostCard({ post }: { post: any }) {
+interface Post {
+  id: string;
+  userId: string;
+  userDisplayName: string;
+  userPhotoURL?: string;
+  content: string;
+  imageUrl?: string;
+  likes?: string[];
+}
+
+export default function PostCard({ post }: { post: Post }) {
   const { currentUser } = useAuth();
   const [isLiked, setIsLiked] = useState(
-    post.likes?.includes(currentUser?.uid) || false
+    post.likes?.includes(currentUser?.uid ?? "") || false
   );
   const [likeCount, setLikeCount] = useState<number>(post.likes?.length || 0);
   const [comment, setComment] = useState("");
@@ -97,7 +107,7 @@ export default function PostCard({ post }: { post: any }) {
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setComments(
-        snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }))
+        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() as { [key: string]: any } }))
       );
     });
     return unsubscribe;
@@ -271,7 +281,7 @@ export default function PostCard({ post }: { post: any }) {
               <textarea
                 value={editedPostContent}
                 onChange={(e) => setEditedPostContent(e.target.value)}
-                className="w-full p-2 border rounded-lg text-sm resize-none"
+                className="w-full bg-[#313131] p-2 focus:outline-none rounded-lg text-sm resize-none"
                 rows={3}
               />
               <div className="flex justify-end space-x-2 mt-2">
@@ -348,7 +358,7 @@ export default function PostCard({ post }: { post: any }) {
             <div className="space-y-3 mt-3 pl-4 border-l-2 border-gray-200">
               {comments.map((comment) => (
                 <div key={comment.id} className="flex items-start">
-                  <div className="w-8 h-8 bg-gray-300 rounded-full mr-2 overflow-hidden">
+                  <div className="w-8 h-8 bg-[#232323] rounded-full mr-2 overflow-hidden">
                     {comment.userPhotoURL && (
                       <img
                         src={comment.userPhotoURL}
@@ -402,7 +412,7 @@ export default function PostCard({ post }: { post: any }) {
                             ⋮
                           </button>
                           {showMenu && (
-                            <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-10">
+                            <div className="absolute right-0 mt-2 w-48 bg-[#2b2b2b] border rounded shadow-lg z-10">
                               <button
                                 onClick={() => deleteComment(comment.id)}
                                 className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100"
