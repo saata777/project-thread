@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from ".././firebase";
 import Link from "next/link";
+import Image from "next/image";
 
 interface User {
   id: string;
@@ -25,6 +26,7 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
+    console.log("Searching...");
     setLoading(true);
     try {
       let q;
@@ -51,7 +53,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     handleSearch();
-  }, [searchTerm]);
+  }, [handleSearch]);
 
   return (
     <div className="max-w-2xl flex  items-center   flex-col mx-auto ">
@@ -82,10 +84,11 @@ export default function SearchPage() {
                   <div className="flex flex-row">
                     <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden mr-3">
                       {user.photoURL && (
-                        <img
+                        <Image
                           src={user.photoURL}
                           alt={user.displayName}
-                          className="w-full h-full object-cover"
+                          width={48}
+                          height={48}
                         />
                       )}
                     </div>

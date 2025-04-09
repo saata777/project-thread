@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
+import { UserCredential } from "firebase/auth";
 import Link from "next/link";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
-import { getAuth, UserCredential } from "firebase/auth";
 
 interface AuthContextType {
   user: {
@@ -29,7 +29,12 @@ interface FormData {
   confirmPassword: string;
 }
 
-export default function RegisterPage() {
+interface RegisterData {
+  email: string;
+  password: string;
+}
+
+const RegisterPage = () => {
   const { register } = useAuth() as unknown as AuthContextType;
   const router = useRouter();
   const [error, setError] = useState("");
@@ -47,6 +52,10 @@ export default function RegisterPage() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleRegister = (data: RegisterData) => {
+    console.log(data);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -274,4 +283,6 @@ export default function RegisterPage() {
       </div>
     </div>
   );
-}
+};
+
+export default RegisterPage;

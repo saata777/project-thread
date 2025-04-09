@@ -27,7 +27,13 @@ interface Post {
   [key: string]: any;
 }
 
-export default function ProfilePage() {
+// შეცვალეთ `any` კონკრეტული ტიპებით:
+interface Profile {
+  id: string;
+  name: string;
+}
+
+const ProfilePage = () => {
   const { currentUser, updateUserProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -40,6 +46,11 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const profile: Profile = { id: "1", name: "John Doe" };
+
+  // შეცვალეთ `let` `const`-ით:
+  const photoURL = "/path/to/photo";
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -89,7 +100,9 @@ export default function ProfilePage() {
         orderBy("createdAt", "desc")
       );
       const unsubscribe = onSnapshot(q, (snapshot) => {
-        setPosts(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        setPosts(
+          snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Post))
+        );
       });
       return unsubscribe;
     }
@@ -353,4 +366,6 @@ export default function ProfilePage() {
       </div>
     </div>
   );
-}
+};
+
+export default ProfilePage;

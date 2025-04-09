@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
-import {
-  collection,
-  query,
-  orderBy,
-  onSnapshot,
-  DocumentData,
-} from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import PostCard from "../components/PostCard";
 import { CreatePost } from "../components/CreatePost";
@@ -24,7 +18,12 @@ interface Post {
   [key: string]: any;
 }
 
-export default function HomePage() {
+interface HomeData {
+  id: string;
+  title: string;
+}
+
+const HomePage = () => {
   const { currentUser } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const router = useRouter();
@@ -46,6 +45,8 @@ export default function HomePage() {
   const onRegister = () => {
     router.push("/register");
   };
+
+  const data: HomeData[] = [];
 
   return (
     <div className="max-w-2xl rounded-t-[30px] border-[#272727] border-b-0 border-[2px] bg-[#1a1a1a] text-black mx-auto">
@@ -85,6 +86,8 @@ export default function HomePage() {
           <PostCard key={post.id} post={post} />
         ))}
       </div>
+
+      <div>{data.map((item) => item.title)}</div>
     </div>
   );
-}
+};
