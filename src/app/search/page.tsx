@@ -1,18 +1,26 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from ".././firebase";
 import Link from "next/link";
+import Image from "next/image";
+
+interface User {
+  id: string;
+  displayName: string;
+  photoURL?: string;
+  bio?: string;
+}
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
-  const { currentUser } = useAuth(); 
+  const { currentUser } = useAuth();
 
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     setLoading(true);
     try {
       let q;
@@ -28,23 +36,23 @@ export default function SearchPage() {
 
       const querySnapshot = await getDocs(q);
       setUsers(
-        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User))
       );
     } catch (error) {
       console.error("Error searching users:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchTerm]);
 
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [handleSearch]);
 
   return (
     <div className="max-w-2xl flex items-center flex-col mx-auto">
       <h1 className="text-2xl font-bold mb-2">Search</h1>
-      <div className="rounded-t-[30px] border-[2px] border-[#3a3a3a] max-w-2xl w-full flex flex-col text-white bg-[#252525] h-[85.7vh] overflow-hidden pb-[50px] mx-auto py-8">
+      <div className="rounded-t-[30px]  border-[2px] border-[#3a3a3a] max-w-2xl w-full flex flex-col text-white bg-[#252525] h-full overflow-hidden pb-[50px] mx-auto py-8">
         <div className="flex w-[95%] self-center mb-6">
           <input
             type="text"
@@ -59,14 +67,14 @@ export default function SearchPage() {
         {loading ? (
           <p></p>
         ) : (
-          <div className="space-y-3 w-full flex flex-col items-start">
+          <div className="space-y-3 w-full flex h-full flex-col items-start">
             {users.map((user) => (
               <Link
                 key={user.id}
                 href={
                   user.id === currentUser?.uid
-                    ? "/profile" // თუ მომხმარებელი საკუთარ თავს დააჭერს
-                    : `/userprofile?userId=${user.id}` // სხვა მომხმარებლებისთვის
+                    ? "/profile"
+                    : `/userprofile?userId=${user.id}`
                 }
                 className="block p-4"
               >
@@ -74,10 +82,12 @@ export default function SearchPage() {
                   <div className="flex flex-row">
                     <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden mr-3">
                       {user.photoURL && (
-                        <img
+                        <Image
                           src={user.photoURL}
                           alt={user.displayName}
-                          className="w-full h-full object-cover"
+                          width={48}
+                          height={48}
+                          className="object-cover"
                         />
                       )}
                     </div>
