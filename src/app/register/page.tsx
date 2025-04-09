@@ -31,7 +31,7 @@ interface FormData {
   confirmPassword: string;
 }
 
-const auth = getAuth();
+
 
 export default function RegisterPage() {
   const { register } = useAuth() as unknown as AuthContextType;
@@ -90,7 +90,7 @@ export default function RegisterPage() {
 
      
       router.push("/home");
-    } catch (error: any) {
+    } catch (error: string | any) {
       console.error("Registration error:", error);
 
       switch (error.code) {

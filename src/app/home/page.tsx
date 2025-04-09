@@ -10,7 +10,7 @@ import { CreatePost } from "../components/CreatePost";
 
 const HomePage = () => {
   const { currentUser } = useAuth();
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<{ id: string; [key: string]: any }[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const HomePage = () => {
               Say more with Threads
             </h2>
             <p className="text-gray-300 mb-6 text-center">
-              Join Threads to share thoughts, find out what's <br /> going on,
+              Join Threads to share thoughts, find out what&#39;s <br /> going on,
               follow your people and more.
             </p>
             <div className="flex flex-col space-y-3">

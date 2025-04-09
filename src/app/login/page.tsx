@@ -11,7 +11,7 @@ import Image1 from "../components/image1.png";
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, ] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 

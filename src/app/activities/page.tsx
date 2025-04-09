@@ -1,4 +1,3 @@
-// app/activities/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -14,8 +13,16 @@ import { db } from ".././firebase";
 import Link from "next/link";
 
 export default function ActivitiesPage() {
-  const { currentUser } = useAuth();
-  const [activities, setActivities] = useState<any[]>([]);
+  const { currentUser }: { currentUser: { uid: string } | null } = useAuth();
+  interface Activity {
+    id: string;
+    type: "like" | "comment" | "follow";
+    byUser?: string;
+    content?: string;
+    createdAt?: { toDate: () => Date };
+  }
+  
+  const [activities, setActivities] = useState<Activity[]>([]);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -28,7 +35,16 @@ export default function ActivitiesPage() {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setActivities(
-        snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            type: data.type,
+            byUser: data.byUser,
+            content: data.content,
+            createdAt: data.createdAt,
+          } as Activity;
+        })
       );
     });
 
@@ -75,7 +91,7 @@ export default function ActivitiesPage() {
                 )}
                 {activity.type === "comment" && (
                   <span>
-                    {activity.byUser} commented on your post: "
+                    {activity.byUser} commented on your post: 
                     {activity.content}"
                   </span>
                 )}
