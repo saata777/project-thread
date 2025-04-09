@@ -119,7 +119,7 @@ export default function CreatePostModal({
         updatedAt: serverTimestamp(),
       };
 
-      const docRef = await addDoc(collection(db, "posts"), postData);
+     
 
       setContent("");
       setImage(null);

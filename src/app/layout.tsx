@@ -1,7 +1,6 @@
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
 import VerticalNavbar from "./components/Navbar";
-import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
   children,

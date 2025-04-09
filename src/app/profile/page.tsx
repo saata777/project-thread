@@ -15,8 +15,17 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import PostCard from "../components/PostCard";
-import { CreatePost } from "../components/CreatePost"; 
-import { link } from "fs";
+import { CreatePost } from "../components/CreatePost";
+import Image from "next/image";
+
+interface Post {
+  id: string;
+  userId: string;
+  userDisplayName: string;
+  userPhotoURL: string;
+  content: string;
+  [key: string]: any;
+}
 
 export default function ProfilePage() {
   const { currentUser, updateUserProfile } = useAuth();
@@ -29,10 +38,9 @@ export default function ProfilePage() {
   });
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -52,7 +60,6 @@ export default function ProfilePage() {
     };
   }, [isEditing]);
 
-  
   useEffect(() => {
     const fetchUserData = async () => {
       if (currentUser) {
@@ -122,7 +129,7 @@ export default function ProfilePage() {
       let photoURL = formData.photoURL;
 
       if (file) {
-    
+        // Handle file upload logic here
       }
 
       const userRef = doc(db, "users", currentUser.uid);
@@ -157,10 +164,12 @@ export default function ProfilePage() {
         <div className="flex flex-row-reverse items-start space-x-6">
           <div className="flex flex-col items-center">
             <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-gray-200">
-              <img
+              <Image
                 src={formData.photoURL || "/default-profile.png"}
                 alt="Profile"
                 className="w-full h-full bg-white object-cover"
+                width={80}
+                height={80}
               />
             </div>
             <div className="flex gap-4 flex-row mt-5 ml-7 ">
@@ -228,12 +237,10 @@ export default function ProfilePage() {
         </div>
       </div>
 
-    
       <div className="mb-8">
         <CreatePost />
       </div>
 
-      
       {isEditing && (
         <div className="fixed  inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
@@ -243,10 +250,12 @@ export default function ProfilePage() {
             <form onSubmit={handleSubmit}>
               <div className="flex flex-row-reverse items-center ">
                 <label className="relative  w-12 cursor-pointer h-12 rounded-full mb-[35px]  overflow-hidden border-2 border-gray-200 ">
-                  <img
+                  <Image
                     src={formData.photoURL || ""}
                     alt="Profile"
                     className="object-cover w-full  h-full"
+                    width={48}
+                    height={48}
                   />
 
                   <input
@@ -307,10 +316,11 @@ export default function ProfilePage() {
               <div className="flex border-b  justify-between mb-8 flex-row">
                 <div className="flex   flex-col">
                   <span className=" text-sm text-[20px] font-medium  text-white">
-                  Private profile
+                    Private profile
                   </span>
                   <span className="text-[12px] h-[45px] text-[#636363] mt-3">
-                  f you switch to private, you won't be able to reply to others unless they follow you.
+                    f you switch to private, you won't be able to reply to
+                    others unless they follow you.
                   </span>
                 </div>
                 <label className=" cursor-pointer">

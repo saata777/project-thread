@@ -2,8 +2,16 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { doc, getDoc, collection, getDocs, query, where } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
+import Image from "next/image";
 
 interface UserData {
   displayName: string;
@@ -16,13 +24,12 @@ interface UserData {
 interface Post {
   id: string;
   content: string;
-  createdAt: any;
+  createdAt: Date;
 }
 
 const UserProfilePage = () => {
   const searchParams = useSearchParams();
-const userId = searchParams?.get("userId") ?? "null";
-
+  const userId = searchParams?.get("userId") ?? "null";
 
   const [userData, setUserData] = useState<UserData | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -57,40 +64,55 @@ const userId = searchParams?.get("userId") ?? "null";
   }, [userId]);
 
   if (!userData) {
-    return <div className="text-center py-10 text-gray-500">User not found</div>;
+    return (
+      <div className="text-center py-10 text-gray-500">User not found</div>
+    );
   }
 
   return (
     <div className="max-w-3xl mx-auto py-6 px-4 bg-black min-h-screen text-white">
-      
       <div className="relative bg-zinc-950 rounded-xl p-6 shadow-lg">
         <div className="absolute  left-[560px] top-[7px]">
-          <img
+          <Image
             src={userData.photoURL || "/default-profile.png"}
             alt="Profile"
             className="w-24 h-24 rounded-full border-4 border-black object-cover"
+            width={96}
+            height={96}
           />
         </div>
         <div className="pl-3">
           <h1 className="text-2xl font-bold">{userData.displayName}</h1>
-            {userData.email && (
+          {userData.email && (
             <p className="text-sm text-gray-400 mt-1">
-               <a href={`mailto:${userData.email}`} className="underline">{userData.email}</a>
+              <a href={`mailto:${userData.email}`} className="underline">
+                {userData.email}
+              </a>
             </p>
           )}
-          {userData.bio && <p className="text-sm mt-5 text-gray-300">{userData.bio}</p>}
-       
+          {userData.bio && (
+            <p className="text-sm mt-5 text-gray-300">{userData.bio}</p>
+          )}
           {userData.link && (
             <p className="text-sm text-blue-400 mt-3">
-              🔗 <a href={userData.link} target="_blank" rel="noopener noreferrer" className="underline">{userData.link}</a>
+              🔗{" "}
+              <a
+                href={userData.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                {userData.link}
+              </a>
             </p>
           )}
         </div>
       </div>
 
-      
       <div className="flex justify-around border-b border-zinc-800 mt-8">
-        <button className="py-2 font-semibold border-b-2 border-white">Threads</button>
+        <button className="py-2 font-semibold border-b-2 border-white">
+          Threads
+        </button>
         <button className="py-2 text-gray-500">Replies</button>
         <button className="py-2 text-gray-500">Reposts</button>
       </div>
@@ -102,14 +124,15 @@ const userId = searchParams?.get("userId") ?? "null";
           posts.map((post) => (
             <div key={post.id} className="bg-zinc-900 p-4 rounded-xl">
               <div className="flex items-center gap-3 mb-2">
-                <img
+                <Image
                   src={userData.photoURL || "/default-profile.png"}
                   alt="Avatar"
                   className="w-10 h-10 rounded-full object-cover"
+                  width={40}
+                  height={40}
                 />
                 <div>
                   <p className="font-semibold">{userData.displayName}</p>
-                 
                 </div>
               </div>
               <p className="text-sm">{post.content}</p>

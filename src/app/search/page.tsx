@@ -1,14 +1,27 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  QuerySnapshot,
+  DocumentData,
+} from "firebase/firestore";
 import { db } from ".././firebase";
 import Link from "next/link";
 
+interface User {
+  id: string;
+  displayName: string;
+  photoURL?: string;
+  bio?: string;
+}
+
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleSearch = async () => {
@@ -16,7 +29,7 @@ export default function SearchPage() {
     try {
       let q;
       if (!searchTerm.trim()) {
-        q = query(collection(db, "users")); 
+        q = query(collection(db, "users"));
       } else {
         q = query(
           collection(db, "users"),
@@ -25,9 +38,9 @@ export default function SearchPage() {
         );
       }
 
-      const querySnapshot = await getDocs(q);
+      const querySnapshot: QuerySnapshot<DocumentData> = await getDocs(q);
       setUsers(
-        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+        querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as User))
       );
     } catch (error) {
       console.error("Error searching users:", error);
@@ -38,7 +51,7 @@ export default function SearchPage() {
 
   useEffect(() => {
     handleSearch();
-  }, []);
+  }, [searchTerm]);
 
   return (
     <div className="max-w-2xl flex  items-center   flex-col mx-auto ">
@@ -67,19 +80,19 @@ export default function SearchPage() {
               >
                 <div className="flex flex-col mt-8 items-center">
                   <div className="flex flex-row">
-                  <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden mr-3">
-                    {user.photoURL && (
-                      <img
-                        src={user.photoURL}
-                        alt={user.displayName}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="font-medium">{user.displayName}</h3>
-                    <p className="text-sm text-gray-500">{user.bio}</p>
-                  </div>
+                    <div className="w-12 h-12 bg-gray-300 rounded-full overflow-hidden mr-3">
+                      {user.photoURL && (
+                        <img
+                          src={user.photoURL}
+                          alt={user.displayName}
+                          className="w-full h-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{user.displayName}</h3>
+                      <p className="text-sm text-gray-500">{user.bio}</p>
+                    </div>
                   </div>
                   <div className="w-[39%]  right-[512px] absolute mt-20 items-end bg-[#3a3a3a] h-[1.3px] "></div>
                 </div>

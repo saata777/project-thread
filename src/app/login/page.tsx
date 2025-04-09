@@ -5,12 +5,12 @@ import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import image from "../components/image1.png";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -19,7 +19,7 @@ const LoginForm = () => {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      setError(null); // Clear error if successful
+      setError(null); 
       router.push("/home");
     } catch (err) {
       if (err instanceof Error) {
@@ -33,7 +33,7 @@ const LoginForm = () => {
   return (
     <div>
       <div className="w-full h-screen absolute top-0 bg-[#0e0e0e]"></div>
-      <img
+      <Image
         src={image.src}
         alt="Login Image"
         className="absolute top-[-130px] z-0 left-0 w-[2000px] h-[520px] object-cover"
@@ -45,7 +45,6 @@ const LoginForm = () => {
         <div className="relative">
           <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
-         
           {error && (
             <div className=" text-[red] text-sm px-4 py-2 rounded mb-4 text-center">
               auth/invalid-credential
@@ -62,7 +61,7 @@ const LoginForm = () => {
 
           <div className="relative flex flex-row items-center">
             <input
-              type={showPassword ? "text" : "password"}
+              type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

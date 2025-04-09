@@ -8,7 +8,6 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
 import { getAuth, UserCredential } from "firebase/auth";
 
-
 interface AuthContextType {
   user: {
     uid: string;
@@ -21,7 +20,6 @@ interface AuthContextType {
     password: string,
     displayName: string
   ) => Promise<UserCredential>;
- 
 }
 
 interface FormData {
@@ -30,8 +28,6 @@ interface FormData {
   password: string;
   confirmPassword: string;
 }
-
-const auth = getAuth();
 
 export default function RegisterPage() {
   const { register } = useAuth() as unknown as AuthContextType;
@@ -70,7 +66,6 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      
       console.log("Registering user with email:", formData.email);
       const userCredential = await register(
         formData.email,
@@ -80,7 +75,6 @@ export default function RegisterPage() {
 
       console.log("User registered successfully", userCredential);
 
-   
       const userDocRef = doc(db, "users", userCredential.user.uid);
       await setDoc(userDocRef, {
         displayName: formData.displayName,
@@ -88,23 +82,24 @@ export default function RegisterPage() {
         createdAt: serverTimestamp(),
       });
 
-     
       router.push("/home");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
 
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          setError("email-already-in-use");
-          break;
-        case "auth/invalid-email":
-          setError("invalid-email");
-          break;
-        case "auth/weak-password":
-          setError("weak-password");
-          break;
-        default:
-          setError("registration error: " + error.message);
+      if (error instanceof Error) {
+        switch ((error as any).code) {
+          case "auth/email-already-in-use":
+            setError("email-already-in-use");
+            break;
+          case "auth/invalid-email":
+            setError("invalid-email");
+            break;
+          case "auth/weak-password":
+            setError("weak-password");
+            break;
+          default:
+            setError("registration error: " + error.message);
+        }
       }
     } finally {
       setLoading(false);
