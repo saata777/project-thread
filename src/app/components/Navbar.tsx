@@ -20,6 +20,7 @@ const AuthRequiredModal = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      
       if (
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
@@ -46,10 +47,10 @@ const AuthRequiredModal = ({
         className="bg-[#151515]  p-6 rounded-xl shadow-xl border "
       >
         <h2 className="text-[38px] font-bold text-white mb-4 text-center">
-          Say more with Threads
+        Say more with Threads
         </h2>
         <p className="text-gray-300 mb-6 text-center">
-          Join Threads to share thoughts, find out what&apos;s <br /> going on, follow your people and more.
+        Join Threads to share thoughts, find out what's <br /> going on, follow your people and more.
         </p>
 
         <div className="flex flex-col space-y-3">
@@ -65,6 +66,7 @@ const AuthRequiredModal = ({
           >
             Register
           </button>
+         
         </div>
       </div>
     </div>

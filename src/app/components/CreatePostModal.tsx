@@ -119,8 +119,7 @@ export default function CreatePostModal({
         updatedAt: serverTimestamp(),
       };
 
-      // Removed unused docRef assignment
-      await addDoc(collection(db, "posts"), postData);
+      const docRef = await addDoc(collection(db, "posts"), postData);
 
       setContent("");
       setImage(null);
@@ -148,7 +147,7 @@ export default function CreatePostModal({
       >
         <div className="flex flex-row-reverse justify-between items-center p-4 border-b border-[#3c3c3c]">
           <div>
-            <button>
+          <button>
               <svg
                 aria-label="Drafts"
                 role="img"
@@ -160,15 +159,15 @@ export default function CreatePostModal({
                   height="15"
                   rx="4.5"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  stroke-width="2"
                   width="15"
                   x="7"
                   y="7"
                 ></rect>
                 <path
-                  clipRule="evenodd"
+                  clip-rule="evenodd"
                   d="M15.3833 4.50007C15.0018 4.15977 14.5475 3.9045 14.05 3.75672C13.7983 3.68195 13.432 3.6357 12.7078 3.68313C11.9633 3.73189 11.0102 3.86454 9.59538 4.06338C8.18054 4.26222 7.22784 4.39741 6.4987 4.55577C5.78946 4.7098 5.45011 4.85522 5.22879 4.99646C4.51904 5.44941 3.99637 6.14302 3.7566 6.95012C3.68183 7.2018 3.63558 7.56809 3.68301 8.29232C3.73177 9.03686 3.86442 9.98992 4.06326 11.4047C4.23845 12.6513 4.36423 13.5391 4.49997 14.2313V17.5001C4.49997 17.737 4.51175 17.9713 4.53475 18.2022C4.05772 17.8249 3.64282 17.3681 3.31041 16.8473C2.66675 15.8387 2.47208 14.4535 2.08272 11.6831C1.69337 8.91269 1.49869 7.52748 1.83941 6.38057C2.21619 5.11227 3.03754 4.02231 4.15285 3.31053C5.16142 2.66688 6.54662 2.4722 9.31703 2.08284C12.0874 1.69349 13.4726 1.49881 14.6196 1.83953C15.8878 2.21631 16.9778 3.03766 17.6896 4.15297C17.7623 4.26696 17.8294 4.38577 17.8916 4.51084C17.7619 4.50369 17.6314 4.50007 17.5 4.50007H15.3833Z"
-                  fillRule="evenodd"
+                  fill-rule="evenodd"
                 ></path>
                 <rect height="2" rx="1" width="9" x="10" y="12"></rect>
                 <rect height="2" rx="1" width="6" x="10" y="15"></rect>
@@ -187,7 +186,7 @@ export default function CreatePostModal({
                   cy="12"
                   r="10"
                   stroke="white"
-                  strokeWidth="1.5"
+                  stroke-width="1.5"
                 ></circle>
                 <path d="M7.5 13.5C6.67157 13.5 6 12.8284 6 12C6 11.1716 6.67157 10.5 7.5 10.5C8.32843 10.5 9 11.1716 9 12C9 12.8284 8.32843 13.5 7.5 13.5Z"></path>
                 <path d="M12 13.5C11.1716 13.5 10.5 12.8284 10.5 12C10.5 11.1716 11.1716 10.5 12 10.5C12.8284 10.5 13.5 11.1716 13.5 12C13.5 12.8284 12.8284 13.5 12 13.5Z"></path>
@@ -215,11 +214,9 @@ export default function CreatePostModal({
           <div className="flex text-white gap-3 mb-4">
             <div className="w-10 h-10 rounded-full bg-gray-700 overflow-hidden flex-shrink-0">
               {currentUser?.photoURL ? (
-                <Image
+                <img
                   src={currentUser.photoURL}
                   alt={currentUser.displayName || "User"}
-                  width={40}
-                  height={40}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -233,7 +230,7 @@ export default function CreatePostModal({
               <input
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="What&apos;s New?"
+                placeholder="What's New?"
                 className="flex-1 bg-[#252525] rounded-lg focus:outline-none"
                 disabled={isLoading}
               />
