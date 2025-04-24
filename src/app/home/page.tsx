@@ -54,10 +54,10 @@ const HomePage = () => {
   };
 
   return (
-    <div className="max-w-2xl rounded-t-[30px] border-[#272727] border-b-0 border-[2px] bg-[#1a1a1a] text-black mx-auto">
-      <h1 className="absolute top-4 left-[650px] text-white">Home</h1>
+    <div className="md:max-w-2xl max-w-[430px] md:mt-20 md:ml-[340px]   md:rounded-t-[30px] border-[#272727] border-b-0 border-[2px] bg-[#1a1a1a] text-black ">
+      <h1 className="absolute top-4  left-[200px] md:left-[650px] text-white">Home</h1>
       {!currentUser && (
-        <div className="inset-0 fixed ml-[1000px] mb-[300px] flex items-center justify-center">
+        <div className="inset-0 fixed ml-[1000px] mb-[300px] hidden items-center md:flex  justify-center">
           <div className="bg-[#151515] p-6 rounded-xl shadow-xl border">
             <h2 className="text-[38px] font-bold text-white mb-4 text-center">
               Say more with Threads
@@ -84,7 +84,7 @@ const HomePage = () => {
         </div>
       )}
       {currentUser && <CreatePost />}
-      <div className="">
+      <div className="w-full">
         {posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}

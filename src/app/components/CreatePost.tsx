@@ -13,14 +13,14 @@ export const CreatePost = () => {
   };
 
   return (
-    <div className="flex border-b-[2px] border-[#272727] items-center p-6">
+    <div className="flex border-b-[2px] mt-9  border-[#272727] items-center p-6">
       <img
-        src={currentUser?.photoURL || "/default-avatar.png"}
+        src={currentUser?.photoURL || ""}
         alt="User Profile"
         className="w-10 h-10 bg-white rounded-full mr-4 object-cover cursor-pointer"
         onClick={() => router.push("/profile")}
         onError={(e) => {
-          (e.target as HTMLImageElement).src = "/default-avatar.png"; 
+          (e.target as HTMLImageElement).src = ""; 
         }}
       />
       <h1 

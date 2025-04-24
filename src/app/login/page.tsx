@@ -5,8 +5,8 @@ import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
-import Image1 from "../components/image1.png";
+
+
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
@@ -32,19 +32,13 @@ const LoginForm = () => {
   };
 
   return (
-    <div>
-      <Image
-        src={Image1}
-        alt="Login Image"
-        className=""
-        layout="fill"
-        objectFit="cover"
-      />
+    <div className=" flex flex-col p-8  justify-center items-center w-[100%]  md:w-[100%] h-[100vh] bg-[#0a0a0a]">
+ 
       <form
         onSubmit={handleSubmit}
-        className="max-w-[390px] mx-auto ml-[550px] mt-[200px] text-white rounded-lg shadow-lg"
+        className="md:max-w-[390px] w-[100%] flex self-center justify-center items-center text-white rounded-lg shadow-lg"
       >
-        <div className="relative">
+        <div className="flex flex-col w-[100%]">
           <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
 
          
@@ -74,7 +68,7 @@ const LoginForm = () => {
 
           <button
             type="submit"
-            className={`w-full py-3 rounded-[14px] h-[58px] ${
+            className={`w-full mr-2 py-3 rounded-[14px] h-[58px] ${
               email && password
                 ? "bg-[#fff] text-black"
                 : "bg-[#fff] text-gray-200 cursor-not-allowed"
@@ -89,19 +83,13 @@ const LoginForm = () => {
               Forgotten password?
             </Link>
             <br />
-            <h1> ---- or ----</h1>
+            <h1> - or -</h1>
             <br />
             <Link href="/register" className="">
               Create a new account
             </Link>
 
-            <div className="flex font-sans w-[800px] text-gray-200 text-xs gap-[15px] h-[15px] flex-row mt-[90px]">
-              <p>© 2025</p>
-              <p className="hover:underline cursor-pointer">Threads Terms</p>
-              <p className="hover:underline cursor-pointer">Privacy Policy</p>
-              <p className="hover:underline cursor-pointer">Cookies Policy</p>
-              <p className="hover:underline cursor-pointer">Report a Problem</p>
-            </div>
+            
           </div>
         </div>
       </form>

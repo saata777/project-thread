@@ -116,7 +116,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen absolute top-[-20px] left-[40%] flex items-center mt-0 text-white justify-center ">
+    <div className="min-h-screen flex items-center mt-0 text-white justify-center ">
       <div className="max-w-md w-full space-y-8 p-8 rounded-lg shadow">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-thin text-white">

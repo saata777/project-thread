@@ -96,7 +96,7 @@ export default function SearchPage() {
                       <p className="text-sm text-gray-500">{user.bio}</p>
                     </div>
                   </div>
-                  <div className="w-[39%] right-[512px] absolute mt-20 items-end bg-[#3a3a3a] h-[1.3px]"></div>
+                  <div className="w-[39%] right-[501px] absolute mt-20 items-end bg-[#3a3a3a] h-[1.3px]"></div>
                 </div>
               </Link>
             ))}

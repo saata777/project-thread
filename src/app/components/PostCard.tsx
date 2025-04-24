@@ -46,6 +46,7 @@ export default function PostCard({ post }: { post: Post }) {
   const [comment, setComment] = useState("");
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [commentCount, setCommentCount] = useState<number>(0);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editedComment, setEditedComment] = useState("");
   const [showCommentInput, setShowCommentInput] = useState(false);
@@ -62,7 +63,10 @@ export default function PostCard({ post }: { post: Post }) {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowMenu(false);
       }
-      if (postMenuRef.current && !postMenuRef.current.contains(event.target as Node)) {
+      if (
+        postMenuRef.current &&
+        !postMenuRef.current.contains(event.target as Node)
+      ) {
         setShowPostMenu(false);
       }
     };
@@ -92,6 +96,14 @@ export default function PostCard({ post }: { post: Post }) {
       window.location.href = `/userprofile?userId=${userId}`;
     }
   };
+
+  useEffect(() => {
+    const q = query(collection(db, "posts", post.id, "comments"));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setCommentCount(snapshot.size);
+    });
+    return () => unsubscribe();
+  }, [post.id]);
 
   useEffect(() => {
     const postRef = doc(db, "posts", post.id);
@@ -234,9 +246,9 @@ export default function PostCard({ post }: { post: Post }) {
   };
 
   return (
-    <div className="p-4 border-b-[2px] text-white border-[#272727]">
-      <div className="flex items-start mb-3">
-        <div className="w-10 h-10 bg-gray-300 rounded-full overflow-hidden mr-3">
+    <div className="p-0 md:p-4 border-b-[2px] text-white border-[#272727]">
+      <div className="md:flex items-start mb-3">
+        <div className="w-10 h-10 mt-10 md:mt-0 bg-gray-300 rounded-full overflow-hidden mr-3">
           {post.userPhotoURL && (
             <img
               src={post.userPhotoURL}
@@ -247,19 +259,19 @@ export default function PostCard({ post }: { post: Post }) {
           )}
         </div>
         <div className="relative flex-1">
-          <div className="font-medium">
+          <div className="font-medium text-[30px]">
             <a
               onClick={() => navigateToUserProfile(post.userId)}
-              className="text-white hover:underline cursor-pointer"
+              className="text-[#b8b8b8] hover:underline cursor-pointer"
             >
               {post.userDisplayName}
             </a>
           </div>
-          
+
           {currentUser && currentUser.uid === post.userId && (
             <div className="relative" ref={postMenuRef}>
               <button
-                className="text-gray-500 absolute top-[-20px] right-0 rotate-90 text-xl"
+                className="text-gray-500 absolute top-[-20px] right-3 rotate-90 text-xl"
                 onClick={togglePostMenu}
               >
                 ⋮
@@ -282,7 +294,7 @@ export default function PostCard({ post }: { post: Post }) {
               )}
             </div>
           )}
-          
+
           {isEditingPost ? (
             <div className="mt-3">
               <textarea
@@ -308,14 +320,14 @@ export default function PostCard({ post }: { post: Post }) {
             </div>
           ) : (
             <>
+              <p className="mb-4 text-[#ffffff]">{post.content}</p>
               {post.imageUrl && (
                 <img
                   src={post.imageUrl}
                   alt="Post image"
-                  className="mt-3 rounded-lg max-w-full h-[500px] object-cover"
+                  className="mt-3 rounded-lg max-w-full h-full md:h-[500px] object-cover"
                 />
               )}
-              <p className="mb-4">{post.content}</p>
             </>
           )}
         </div>
@@ -339,7 +351,8 @@ export default function PostCard({ post }: { post: Post }) {
               }}
               className="hover:text-blue-500"
             >
-              💬 {comments.length}
+              💬 {commentCount}
+
             </button>
           </div>
 

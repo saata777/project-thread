@@ -66,9 +66,9 @@ const UserProfilePage = () => {
   return (
     <div className="max-w-3xl mx-auto py-6 px-4 bg-black min-h-screen text-white">
       <div className="relative bg-zinc-950 rounded-xl p-6 shadow-lg">
-        <div className="absolute left-[560px] top-[7px]">
+        <div className="absolute md:left-[560px] left-[260px] top-[7px]">
           <Image
-            src={userData.photoURL || "/default-profile.png"}
+            src={userData.photoURL || ""}
             alt="Profile"
             width={96}
             height={96}
@@ -92,9 +92,8 @@ const UserProfilePage = () => {
       </div>
 
       <div className="flex justify-around border-b border-zinc-800 mt-8">
-        <button className="py-2 font-semibold border-b-2 border-white">Threads</button>
-        <button className="py-2 text-gray-500">Replies</button>
-        <button className="py-2 text-gray-500">Reposts</button>
+        <button className="py-2 font-semibold border-b-2 border-white">posts</button>
+        
       </div>
 
       <div className="mt-6 space-y-6">

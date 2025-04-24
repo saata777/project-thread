@@ -13,7 +13,7 @@ export default function RootLayout({
       <body className="bg-[#0a0a0a]">
         <AuthProvider>
           <VerticalNavbar />
-          <main className="mr-40 mt-16">{children}</main>
+          <main className="">{children}</main>
         </AuthProvider>
       </body>
     </html>
